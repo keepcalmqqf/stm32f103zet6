@@ -33,6 +33,16 @@ STM32CubeMX-generated CMake project for STM32F103ZET6 (ARM Cortex-M3). Firmware 
 - The only practical verification is a clean build: `cmake --build --preset Debug`.
 - To inspect the binary: `arm-none-eabi-size build/Debug/led-flow-pro-hal.elf` or `arm-none-eabi-objdump -h build/Debug/led-flow-pro-hal.elf`.
 
+## Flashing (ST-Link)
+
+- Use **STM32CubeProgrammer CLI** (`STM32_Programmer_CLI`) which ships with STM32CubeCLT.
+- Typical command after build:
+  ```bash
+  STM32_Programmer_CLI -c port=SWD -w build/Debug/led-flow-pro-hal.elf -v -rst
+  ```
+- To target a specific probe when multiple are connected, add `sn=<serial>` (find serial via `STM32_Programmer_CLI --list`).
+- If the CLI is not on PATH, it usually lives under `D:\STM32CubeCLT_1.x.x\STM32CubeProgrammer\bin` on Windows.
+
 ## IDE / environment
 
 - `.idea/` contains JetBrains run configurations for ST-Link debugging. Do not commit IDE-specific changes unless intended.
