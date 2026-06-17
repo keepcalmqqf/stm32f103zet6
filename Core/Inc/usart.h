@@ -6,7 +6,7 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
+/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USART_H__
 #define __USART_H__
 
@@ -17,14 +17,25 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/* Exported defines ----------------------------------------------------------*/
-#define USART1_BAUDRATE 115200U
+/* USER CODE BEGIN Includes */
 
-/* Exported functions prototypes ---------------------------------------------*/
+/* USER CODE END Includes */
+
+extern UART_HandleTypeDef huart1;
+
+/* USER CODE BEGIN Private defines */
+#define USART1_BAUDRATE 115200U
+/* USER CODE END Private defines */
+
+void MX_USART1_UART_Init(void);
+
+/* USER CODE BEGIN Prototypes */
 void USART1_Init(void);
+/* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __USART_H__ */
+

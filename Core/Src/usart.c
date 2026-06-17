@@ -8,50 +8,113 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
+
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+UART_HandleTypeDef huart1;
+
+/* USART1 init function */
+
+void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
+{
+
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  if(uartHandle->Instance==USART1)
+  {
+  /* USER CODE BEGIN USART1_MspInit 0 */
+
+  /* USER CODE END USART1_MspInit 0 */
+    /* USART1 clock enable */
+    __HAL_RCC_USART1_CLK_ENABLE();
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**USART1 GPIO Configuration
+    PA9     ------> USART1_TX
+    PA10     ------> USART1_RX
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_10;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN USART1_MspInit 1 */
+
+  /* USER CODE END USART1_MspInit 1 */
+  }
+}
+
+void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
+{
+
+  if(uartHandle->Instance==USART1)
+  {
+  /* USER CODE BEGIN USART1_MspDeInit 0 */
+
+  /* USER CODE END USART1_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_USART1_CLK_DISABLE();
+
+    /**USART1 GPIO Configuration
+    PA9     ------> USART1_TX
+    PA10     ------> USART1_RX
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9|GPIO_PIN_10);
+
+  /* USER CODE BEGIN USART1_MspDeInit 1 */
+
+  /* USER CODE END USART1_MspDeInit 1 */
+  }
+}
+
+/* USER CODE BEGIN 1 */
 #include <stdio.h>
 
-/* Private defines -----------------------------------------------------------*/
-#define USART1_BRR_VALUE    (72000000U / USART1_BAUDRATE)   /* APB2 = 72 MHz */
-
-/* Private function prototypes -----------------------------------------------*/
-static void USART1_GPIO_Init(void);
-
-/* Private user code ---------------------------------------------------------*/
-static void USART1_GPIO_Init(void)
-{
-    /* Enable clocks for GPIOA and USART1 */
-    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-
-    /* PA9  (USART1_TX): Alternate function push-pull, 50 MHz */
-    GPIOA->CRH &= ~(0x0FU << 4U);
-    GPIOA->CRH |=  (0x0BU << 4U);   /* CNF=10, MODE=11 */
-
-    /* PA10 (USART1_RX): Floating input */
-    GPIOA->CRH &= ~(0x0FU << 8U);
-    GPIOA->CRH |=  (0x04U << 8U);   /* CNF=01, MODE=00 */
-}
-
-/* Exported functions --------------------------------------------------------*/
 void USART1_Init(void)
 {
-    USART1_GPIO_Init();
-
-    /* Configure baud rate and enable transmitter/receiver/USART */
-    USART1->BRR = USART1_BRR_VALUE;
-    USART1->CR1 = USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
+    MX_USART1_UART_Init();
 }
 
-/* Redirect printf/putchar to USART1 */
 int __io_putchar(int ch)
 {
-    /* Wait until TX empty */
-    while ((USART1->SR & USART_SR_TXE) == 0U)
-    {
-    }
-    USART1->DR = (uint8_t)ch;
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1U, HAL_MAX_DELAY);
     return ch;
 }
+/* USER CODE END 1 */
+
