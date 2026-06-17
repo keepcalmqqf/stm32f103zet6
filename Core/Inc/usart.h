@@ -1,34 +1,30 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    led.h
-  * @brief   LED abstraction layer header.
+  * @file    usart.h
+  * @brief   USART1 driver header.
   ******************************************************************************
   */
 /* USER CODE END Header */
 
-#ifndef __LED_H__
-#define __LED_H__
+#ifndef __USART_H__
+#define __USART_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include <stdint.h>
+#include "main.h"
 
 /* Exported defines ----------------------------------------------------------*/
-#define LED_COUNT 3
+#define USART1_BAUDRATE 115200U
 
 /* Exported functions prototypes ---------------------------------------------*/
-void LED_Init(void);
-void LED_AllOff(void);
-void LED_On(uint8_t index);
-void LED_Off(uint8_t index);
-uint8_t LED_ToggleNext(void);
+void USART1_Init(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __LED_H__ */
+#endif /* __USART_H__ */

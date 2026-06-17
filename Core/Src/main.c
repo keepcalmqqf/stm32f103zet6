@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led.h"
+#include "usart.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -88,6 +90,8 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   LED_Init();
+  USART1_Init();
+  printf("STM32F103ZET6 USART1 initialized: %lu baud\r\n", (unsigned long)USART1_BAUDRATE);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -97,7 +101,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    LED_ToggleNext();
+    uint8_t led_index = LED_ToggleNext();
+    printf("LED %u ON\r\n", (unsigned int)(led_index + 1U));
     HAL_Delay(5000);
   }
   /* USER CODE END 3 */
