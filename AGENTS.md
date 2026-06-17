@@ -1,4 +1,4 @@
-# Agent Notes: led-flow-pro-hal
+# Agent Notes: stm32f103zet6
 
 STM32CubeMX-generated CMake project for STM32F103ZET6 (ARM Cortex-M3). Firmware lives in `Core/`, HAL/Drivers are vendored under `Drivers/`.
 
@@ -9,12 +9,12 @@ STM32CubeMX-generated CMake project for STM32F103ZET6 (ARM Cortex-M3). Firmware 
   - `cmake --preset Debug`
   - `cmake --build --preset Debug`
   - Release: replace `Debug` with `Release`.
-- Output: `build/Debug/led-flow-pro-hal.elf` and `.map`.
+- Output: `build/Debug/stm32f103zet6.elf` and `.map`.
 - Toolchain: `cmake/gcc-arm-none-eabi.cmake` (default). `cmake/starm-clang.cmake` exists as an alternative but is not wired into presets.
 
 ## Project structure
 
-- `led-flow-pro-hal.ioc` — STM32CubeMX configuration source of truth. Regenerating from it will overwrite `Core/Src`, `Core/Inc`, `Drivers/`, `cmake/stm32cubemx/CMakeLists.txt`, and startup/linker files. Hand-edits in generated sections will be lost.
+- `stm32f103zet6.ioc` — STM32CubeMX configuration source of truth. Regenerating from it will overwrite `Core/Src`, `Core/Inc`, `Drivers/`, `cmake/stm32cubemx/CMakeLists.txt`, and startup/linker files. Hand-edits in generated sections will be lost.
 - `Core/Src/main.c` — application entry point. CubeMX inserts `/* USER CODE BEGIN/END ... */` guard blocks; keep custom code inside those blocks to survive regeneration.
 - `Core/Src/gpio.c`, `Core/Inc/gpio.h` — GPIO init (LED1/LED2/LED3 on PA0/PA1/PA8).
 - `Core/Src/stm32f1xx_it.c`, `stm32f1xx_hal_msp.c` — interrupt and MSP handlers.
@@ -31,14 +31,14 @@ STM32CubeMX-generated CMake project for STM32F103ZET6 (ARM Cortex-M3). Firmware 
 
 - There are no automated tests, lint, or CI configs in this repo.
 - The only practical verification is a clean build: `cmake --build --preset Debug`.
-- To inspect the binary: `arm-none-eabi-size build/Debug/led-flow-pro-hal.elf` or `arm-none-eabi-objdump -h build/Debug/led-flow-pro-hal.elf`.
+- To inspect the binary: `arm-none-eabi-size build/Debug/stm32f103zet6.elf` or `arm-none-eabi-objdump -h build/Debug/stm32f103zet6.elf`.
 
 ## Flashing (ST-Link)
 
 - Use **STM32CubeProgrammer CLI** (`STM32_Programmer_CLI`) which ships with STM32CubeCLT.
 - Typical command after build:
   ```bash
-  STM32_Programmer_CLI -c port=SWD -w build/Debug/led-flow-pro-hal.elf -v -rst
+  STM32_Programmer_CLI -c port=SWD -w build/Debug/stm32f103zet6.elf -v -rst
   ```
 - To target a specific probe when multiple are connected, add `sn=<serial>` (find serial via `STM32_Programmer_CLI --list`).
 - If the CLI is not on PATH, it usually lives under `D:\STM32CubeCLT_1.x.x\STM32CubeProgrammer\bin` on Windows.
