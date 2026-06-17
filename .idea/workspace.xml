@@ -16,6 +16,12 @@
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="stm32f103zet6" targetName="stm32f103zet6" />
+      <config projectName="stm32f103zet6" targetName="STM32_Drivers" />
+    </generated>
+  </component>
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" ENABLED="false" CONFIG_NAME="Debug" />
@@ -25,9 +31,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5abc6245-6880-4f71-a6d6-bf2138786acb" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="5abc6245-6880-4f71-a6d6-bf2138786acb" name="更改" comment="chore(ide): 优化IDE项目配置文件格式与内容&#10;&#10;- 将部分组件内容改为CDATA格式，提升XML内容的可读性&#10;- 清理并精简更改列表，去除冗余路径记录&#10;- 更新项目唯一标识符，保持项目配置一致性&#10;- 精简属性组件内容，移除无用配置项&#10;- 调整运行配置，新增默认配置模板&#10;- 更新任务管理器中的活动任务时间戳及工作项信息">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,11 +44,19 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug - Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="FK4yvxao" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
@@ -63,6 +78,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
@@ -71,6 +87,11 @@
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "git-widget-placeholder": "feat/led-flow-hal",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "org.rust.first.attach.projects": "true",
     "settings.editor.selected.configurable": "com.jetbrains.cidr.embedded.config",
     "vue.rearranger.settings.migration": "true"
@@ -107,11 +128,30 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1781708133878</updated>
-      <workItem from="1781708138862" duration="16000" />
+      <workItem from="1781708138862" duration="513000" />
     </task>
+    <task id="LOCAL-00001" summary="chore(ide): 优化IDE项目配置文件格式与内容&#10;&#10;- 将部分组件内容改为CDATA格式，提升XML内容的可读性&#10;- 清理并精简更改列表，去除冗余路径记录&#10;- 更新项目唯一标识符，保持项目配置一致性&#10;- 精简属性组件内容，移除无用配置项&#10;- 调整运行配置，新增默认配置模板&#10;- 更新任务管理器中的活动任务时间戳及工作项信息">
+      <option name="closed" value="true" />
+      <created>1781708253456</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1781708253456</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+    <isAutomaticBootstrapAfterUpdate value="false" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="chore(ide): 优化IDE项目配置文件格式与内容&#10;&#10;- 将部分组件内容改为CDATA格式，提升XML内容的可读性&#10;- 清理并精简更改列表，去除冗余路径记录&#10;- 更新项目唯一标识符，保持项目配置一致性&#10;- 精简属性组件内容，移除无用配置项&#10;- 调整运行配置，新增默认配置模板&#10;- 更新任务管理器中的活动任务时间戳及工作项信息" />
+    <option name="LAST_COMMIT_MESSAGE" value="chore(ide): 优化IDE项目配置文件格式与内容&#10;&#10;- 将部分组件内容改为CDATA格式，提升XML内容的可读性&#10;- 清理并精简更改列表，去除冗余路径记录&#10;- 更新项目唯一标识符，保持项目配置一致性&#10;- 精简属性组件内容，移除无用配置项&#10;- 调整运行配置，新增默认配置模板&#10;- 更新任务管理器中的活动任务时间戳及工作项信息" />
   </component>
 </project>

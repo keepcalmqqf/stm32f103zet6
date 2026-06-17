@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "led.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,7 +87,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  uint8_t led_index = 0;
+  LED_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -97,32 +97,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    // Turn off all LEDs first
-    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
-
-    // Turn on the current LED (active low)
-    switch (led_index)
-    {
-      case 0:
-        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-        break;
-      case 1:
-        HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
-        break;
-      case 2:
-        HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
-        break;
-      default:
-        break;
-    }
-
-    // Move to next LED
-    led_index = (led_index + 1) % 3;
-
-    // Delay 500ms
-    HAL_Delay(500);
+    LED_ToggleNext();
+    HAL_Delay(5000);
   }
   /* USER CODE END 3 */
 }
