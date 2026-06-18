@@ -1,0 +1,11 @@
+# Build outputs
+build/
+
+# Local toolchain / tools
+.toolchain/
+
+# IDE
+.idea/
+
+# OS
+.DS_Store

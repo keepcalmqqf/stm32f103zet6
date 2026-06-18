@@ -67,9 +67,11 @@ void LED_Off(uint8_t index)
     LED_Write(index, GPIO_PIN_SET); /* Active low: SET = off */
 }
 
-void LED_ToggleNext(void)
+uint8_t LED_ToggleNext(void)
 {
     LED_AllOff();
     LED_On(led_current);
+    uint8_t on_index = led_current;
     led_current = (led_current + 1) % LED_COUNT;
+    return on_index;
 }

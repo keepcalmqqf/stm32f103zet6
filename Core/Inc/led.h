@@ -25,7 +25,7 @@ void LED_Init(void);
 void LED_AllOff(void);
 void LED_On(uint8_t index);
 void LED_Off(uint8_t index);
-void LED_ToggleNext(void);
+uint8_t LED_ToggleNext(void);
 
 #ifdef __cplusplus
 }
