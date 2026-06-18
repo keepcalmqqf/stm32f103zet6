@@ -31,7 +31,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5abc6245-6880-4f71-a6d6-bf2138786acb" name="更改" comment="feat(usart): 添加USART1驱动并集成到LED示例程序&#10;&#10;- 新增usart.c和usart.h，实现USART1初始化及printf重定向&#10;- 配置USART1波特率115200，使用PA9作为TX，PA10作为RX引脚&#10;- 在main.c中初始化USART1并在LED状态切换时打印状态信息&#10;- 修改led模块LED_ToggleNext函数以返回当前点亮的LED索引&#10;- 更新CMakeLists.txt添加usart.c文件的编译支持&#10;- 调整stm32f1xx_hal_conf.h启用HAL_UART_MODULE_ENABLED宏&#10;- 更新.stm32f103zet6.ioc配置文件支持USART1外设及相关GPIO配置" />
+    <list default="true" id="5abc6245-6880-4f71-a6d6-bf2138786acb" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/stm32f103zet7.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/stm32f103zet6.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/stm32f103zet6.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -81,12 +86,15 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
+    "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "feat/usart1-led-log",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -94,17 +102,12 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "com.jetbrains.cidr.embedded.config",
+    "settings.editor.selected.configurable": "settings.sync",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RunManager" selected="CMake 应用程序.stm32f103zet6">
     <configuration name="STM32_Drivers" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="stm32f103zet6" TARGET_NAME="STM32_Drivers" CONFIG_NAME="Debug - Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -130,6 +133,7 @@
       <option name="presentableId" value="Default" />
       <updated>1781708133878</updated>
       <workItem from="1781708138862" duration="513000" />
+      <workItem from="1781745028335" duration="9000" />
     </task>
     <task id="LOCAL-00001" summary="chore(ide): 优化IDE项目配置文件格式与内容&#10;&#10;- 将部分组件内容改为CDATA格式，提升XML内容的可读性&#10;- 清理并精简更改列表，去除冗余路径记录&#10;- 更新项目唯一标识符，保持项目配置一致性&#10;- 精简属性组件内容，移除无用配置项&#10;- 调整运行配置，新增默认配置模板&#10;- 更新任务管理器中的活动任务时间戳及工作项信息">
       <option name="closed" value="true" />
