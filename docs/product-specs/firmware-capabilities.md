@@ -15,6 +15,7 @@
 | CAP-005 | ILI9486 LCD 初始化与刷屏 | LCD 依次显示蓝、红、绿、黑，读 ID 返回有效值 | `Core/BSP/Src/ili9486.c` |
 | CAP-006 | RTC 实时时钟 | LSE 32.768 kHz 时钟，可读取/设置时、分、秒 | `Core/BSP/Src/rtc.c` |
 | CAP-007 | LVGL 实时时间显示 | 屏幕居中显示绿色 `HH:MM:SS`，每秒刷新 | `Core/BSP/Src/lvgl_port_display.c`、`Core/Src/main.c` |
+| CAP-013 | ESP32-C3 串口透传 | NTP 成功后 USART1（PA9/PA10）与 USART2（PA2/PA3）双向透明转发；PC 发送 `AT\r\n` 能收到 `OK` | `Core/App/Src/app_passthrough.c`、`Core/BSP/Src/esp_wifi.c` |
 
 ---
 
@@ -27,7 +28,6 @@
 | CAP-010 | 按键输入处理 | 📋 规划中 | KEY1-4 引脚 PF8/PF9/PF10/PF11 |
 | CAP-011 | W5500 以太网 | 📋 规划中 | SPI2，PB12-PB15/PD3/PG6 |
 | CAP-012 | LoRa（LLCC68）| 📋 规划中 | SPI1，PG13-PG14/PE2/PE5/PE6 |
-| CAP-013 | ESP32-C3 串口透传 | 📋 规划中 | USART2 PA2/PA3，PE4 使能 |
 | CAP-014 | 蜂鸣器控制 | 📋 规划中 | PB1 |
 | CAP-015 | 4-20 mA 采集 | 📋 规划中 | PF6/PF7 |
 | CAP-016 | DS18B20 温度采集 | 📋 规划中 | PC3 |
@@ -43,3 +43,4 @@
 - 观察 LED 每秒切换一次。
 - 观察 LCD 以绿色大字显示 `HH:MM:SS`，每秒刷新。
 - 通过 USB-TTL 连接 PA9/PA10，检查串口日志中的 RTC 时间输出。
+- NTP 成功后，通过 USB-TTL 连接 PA9/PA10 发送 `AT\r\n`，确认收到 ESP32-C3 返回的 `OK`。
