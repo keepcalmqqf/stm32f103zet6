@@ -46,6 +46,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/led.c
     Core/Src/usart.c
+    Core/Src/ili9486.c
 )
 
 # Add include paths

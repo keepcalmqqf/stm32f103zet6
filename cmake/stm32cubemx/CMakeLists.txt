@@ -19,13 +19,22 @@ set(MX_Include_Dirs
 
 # STM32CubeMX generated application sources
 set(MX_Application_Src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/main.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/gpio.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/usart.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32f1xx_it.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32f1xx_hal_msp.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/sysmem.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/syscalls.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/main.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/gpio.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/fsmc.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/usart.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/stm32f1xx_it.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/stm32f1xx_hal_msp.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/sysmem.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/syscalls.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/main.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/gpio.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/fsmc.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/usart.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/stm32f1xx_it.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/stm32f1xx_hal_msp.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/sysmem.c
+    D:/coding/embedded/stm32f103zet6/Core/Src/syscalls.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32f103xe.s
 )
 
@@ -33,7 +42,11 @@ set(MX_Application_Src
 set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/system_stm32f1xx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_fsmc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_nor.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sram.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_nand.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pccard.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c
@@ -44,6 +57,7 @@ set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
 )
 
 # Drivers Midllewares

@@ -1,0 +1,34 @@
+ARM 工具链快速参考
+
+本文件为智能体提供 arm-none-eabi-gcc 工具链的常用命令与标志。
+
+---
+
+构建
+- cmake --preset Debug
+- cmake --build --preset Debug
+- 强制刷新：cmake --preset Debug --fresh
+
+二进制检查
+- arm-none-eabi-size <elf>：查看 text/data/bss 占用
+- arm-none-eabi-objdump -h <elf>：查看段头
+- arm-none-eabi-objdump -d <elf>：反汇编
+- arm-none-eabi-nm --print-size --size-sort --radix=d <elf>：按大小排序符号
+- arm-none-eabi-readelf -a <elf>：查看 ELF 信息
+
+格式转换
+- arm-none-eabi-objcopy -O binary <elf> <bin>
+- arm-none-eabi-objcopy -O ihex <elf> <hex>
+
+烧录
+- STM32_Programmer_CLI -c port=SWD -w <elf> -v -rst
+- STM32_Programmer_CLI --list：列出调试器
+- STM32_Programmer_CLI -c port=SWD sn=<serial> -w <elf> -v -rst
+
+常见编译标志
+- -mcpu=cortex-m3
+- -mthumb
+- -O0 / -O2 / -Os
+- -g
+- -Wall -Wextra
+- -DUSE_HAL_DRIVER -DSTM32F103xE
