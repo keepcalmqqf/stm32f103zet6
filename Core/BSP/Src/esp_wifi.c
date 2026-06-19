@@ -11,6 +11,7 @@
 
 #include "esp_wifi.h"
 #include "usart.h"
+#include "app_config.h"
 #include "stm32f1xx_hal.h"
 #include <string.h>
 #include <stdio.h>
@@ -59,14 +60,28 @@ static void esp_debug_dump(const char *label, const char *buf)
     printf("[ESP DBG] %s: [", label);
     for (const char *p = buf; *p != '\0'; p++)
     {
-        const char c = *p;
-        if ((c >= 0x20) && (c <= 0x7E))
+        const unsigned char c = (unsigned char)*p;
+        switch (c)
         {
-            printf("%c", c);
-        }
-        else
-        {
-            printf("\\x%02X", (unsigned char)c);
+            case '\r':
+                printf("\\r");
+                break;
+            case '\n':
+                printf("\\n");
+                break;
+            case '\t':
+                printf("\\t");
+                break;
+            default:
+                if ((c >= 0x20) && (c <= 0x7E))
+                {
+                    printf("%c", (char)c);
+                }
+                else
+                {
+                    printf("\\x%02X", c);
+                }
+                break;
         }
     }
     printf("]\r\n");
@@ -183,6 +198,28 @@ static bool esp_parse_ntp_response(const char *response, ESP_DateTime_t *dt)
     return true;
 }
 
+/**
+ * @brief  Hardware reset the ESP32-C3 module via the PE4 enable pin.
+ * @note   Pulls EN low for 100 ms, then releases. This is independent of the
+ *         initial GPIO setup done by app_passthrough, ensuring a clean reset
+ *         right before the first AT command.
+ */
+static void esp_module_reset(void)
+{
+    __HAL_RCC_GPIOE_CLK_ENABLE();
+
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitStruct.Pin = APP_ESP_EN_GPIO_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(APP_ESP_EN_GPIO_PORT, &GPIO_InitStruct);
+
+    HAL_GPIO_WritePin(APP_ESP_EN_GPIO_PORT, APP_ESP_EN_GPIO_PIN, GPIO_PIN_RESET);
+    HAL_Delay(100U);
+    HAL_GPIO_WritePin(APP_ESP_EN_GPIO_PORT, APP_ESP_EN_GPIO_PIN, GPIO_PIN_SET);
+}
+
 bool ESP_WiFiInit(const char *ssid, const char *password)
 {
     if ((ssid == NULL) || (password == NULL))
@@ -190,12 +227,13 @@ bool ESP_WiFiInit(const char *ssid, const char *password)
         return false;
     }
 
-    /* Wait for the ESP32-C3 AT firmware to finish booting. */
+    /* Hard reset the module and give it time to boot the AT firmware. */
+    esp_module_reset();
     HAL_Delay(ESP_BOOT_DELAY_MS);
     esp_drain_rx_until_idle();
 
     /* Disable command echo to simplify parsing. */
-    if (!esp_send_command("ATE0\r\n", "OK", 1000U))
+    if (!esp_send_command("ATE0\r\n", "OK", 2000U))
     {
         return false;
     }
