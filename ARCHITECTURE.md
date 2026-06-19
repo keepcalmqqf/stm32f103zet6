@@ -79,8 +79,9 @@ stm32f103zet6/
 | `startup_stm32f103xe.s` | 启动汇编 | 是 |
 | `STM32F103XX_FLASH.ld` | 链接脚本 | 是 |
 | `HARDWARE_PINOUT.md` | 核心板完整引脚分配与外设说明 | 否 |
-| `configure_fsmc_ioc.py` | 给 .ioc 注入 FSMC 配置的辅助脚本 | 否 |
-| `cubemx_generate.script` | STM32CubeMX 命令行生成脚本 | 否 |
+| `scripts/configure_fsmc_ioc.py` | 给 .ioc 注入 FSMC 配置的辅助脚本 | 否 |
+| `scripts/cubemx_generate.script` | STM32CubeMX 命令行生成脚本 | 否 |
+| `scripts/README.md` | 脚本目录说明 | 否 |
 
 ---
 
@@ -208,7 +209,7 @@ USART1 TX → PA9 → USB-TTL 串口工具
 ## 7. 扩展新外设的标准流程
 
 1. 在 `stm32f103zet6.ioc` 中配置外设与引脚。
-2. 用 STM32CubeMX 重新生成代码（`STM32CubeMX -s cubemx_generate.script`）。
+2. 用 STM32CubeMX 重新生成代码（`STM32CubeMX -s scripts/cubemx_generate.script`）。
 3. 在 `Core/Inc/` 与 `Core/Src/` 创建新的 BSP 驱动文件。
 4. 在根 `CMakeLists.txt` 的 `target_sources(...)` 中添加新 `.c`。
 5. 在 `main.c` 的 `USER CODE BEGIN 2` 区域调用初始化函数。

@@ -21,7 +21,7 @@
 1. 修改 `stm32f103zet6.ioc` 后 → 用 STM32CubeMX 重新生成代码：
 
    ```bash
-   STM32CubeMX -s cubemx_generate.script
+   STM32CubeMX -s scripts/cubemx_generate.script
    ```
 
 2. 修改用户源码后 → 重新构建：

@@ -25,4 +25,4 @@
 
 | ID | 描述 | 偿还日期 | 相关提交 |
 |----|------|----------|----------|
-| TD-001 | `configure_fsmc_ioc.py` 与 `stm32f103zet6.ioc` 中的 FSMC 配置由 NE1/A16 修正为 NE4/A10，与 `HARDWARE_PINOUT.md` 一致 | 2026-06-19 | — |
+| TD-001 | `scripts/configure_fsmc_ioc.py` 与 `stm32f103zet6.ioc` 中的 FSMC 配置由 NE1/A16 修正为 NE4/A10，与 `HARDWARE_PINOUT.md` 一致 | 2026-06-19 | — |

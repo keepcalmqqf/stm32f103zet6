@@ -171,7 +171,7 @@ STM32_Programmer_CLI -c port=SWD -e all -rst
 
 ```bash
 # 命令行生成（需 STM32CubeMX 在 PATH）
-STM32CubeMX -s cubemx_generate.script
+STM32CubeMX -s scripts/cubemx_generate.script
 
 # 或图形界面打开 .ioc 后点击 GENERATE CODE
 
