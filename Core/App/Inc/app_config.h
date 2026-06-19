@@ -36,6 +36,14 @@ extern "C" {
 /* Time update interval (ms). */
 #define APP_TIME_UPDATE_MS  1000U
 
+/* ESP32-C3 passthrough configuration. */
+#define APP_PASSTHROUGH_ENABLED      1
+#define APP_PASSTHROUGH_BUF_SIZE     256U
+
+/* ESP32-C3 enable pin (active high). */
+#define APP_ESP_EN_GPIO_PORT         GPIOE
+#define APP_ESP_EN_GPIO_PIN          GPIO_PIN_4
+
 /* Logging abstraction: route everything through printf on USART1.
    Disable by defining APP_LOG_DISABLE before including this header. */
 #ifndef APP_LOG_DISABLE
