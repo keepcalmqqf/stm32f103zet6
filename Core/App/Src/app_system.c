@@ -12,6 +12,7 @@
 #include "app_system.h"
 #include "app_config.h"
 #include "app_time_sync.h"
+#include "app_passthrough.h"
 #include "app_ui.h"
 #include "fsmc.h"
 #include "gpio.h"
@@ -42,6 +43,11 @@ static bool App_System_InitBoard(void)
     LED_Init();
     USART1_Init();
     APP_LOG_INFO("USART1 initialized: %lu baud", (unsigned long)USART1_BAUDRATE);
+
+    USART1_InitRxInterrupt();
+    USART2_InitRxInterrupt();
+    App_Passthrough_Init();
+    APP_LOG_INFO("Passthrough bridge initialized");
 
     /* Diagnostic: blink LED2 and LED3 to confirm we reached init. */
     LED_Blink(1, 6, 200);
@@ -101,6 +107,13 @@ bool App_System_Init(void)
     }
 
     APP_LOG_INFO("Application initialized successfully");
+
+    if (ntp_synced)
+    {
+        APP_LOG_INFO("Entering passthrough mode");
+        App_Passthrough_Start();
+    }
+
     return true;
 }
 
@@ -134,6 +147,7 @@ void App_System_Run(void)
         }
 
         const uint32_t ui_delay_ms = App_UI_Handler();
+        App_Passthrough_Run();
         HAL_Delay(ui_delay_ms);
     }
 }
