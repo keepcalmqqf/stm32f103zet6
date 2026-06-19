@@ -34,6 +34,8 @@ void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void USART1_Init(void);
+void USART1_InitRxInterrupt(void);
+void USART2_InitRxInterrupt(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
