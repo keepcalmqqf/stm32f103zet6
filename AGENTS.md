@@ -86,6 +86,7 @@ STM32_Programmer_CLI -c port=SWD -w build/Debug/stm32f103zet6.elf -v -rst
 | 已验证功能与验收标准 | `docs/product-specs/firmware-capabilities.md` |
 | 架构与数据流 / 模块分层说明 | `ARCHITECTURE.md` |
 | 新增模块应放哪里（BSP / App / Config） | `ARCHITECTURE.md` 第 2、6 节 |
+| 构建、烧录与发布流程 | `RELEASE.md` |
 | 硬件引脚分配 | `HARDWARE_PINOUT.md` |
 | 设计原则与决策 | `docs/design-docs/` |
 | 执行计划（活跃 / 已完成 / 技术债务） | `docs/exec-plans/` |
@@ -103,9 +104,9 @@ STM32_Programmer_CLI -c port=SWD -w build/Debug/stm32f103zet6.elf -v -rst
 ## 智能体工作原则
 
 1. **代码仓库是记录系统。** 业务知识、设计决策、验收标准、执行计划应存放在代码仓库内已版本化的 Markdown 文件中，而不是聊天记录或人脑中。
-2. **渐进式披露。** 先读 `AGENTS.md` 定位，再按项目地图深入 `ARCHITECTURE.md` 或 `docs/` 中对应的真实信息源。
+2. **渐进式披露。** 先读 `AGENTS.md` 定位，再按项目地图深入 `ARCHITECTURE.md`、`RELEASE.md` 或 `docs/` 中对应的真实信息源。
 3. **保持 `AGENTS.md` 精简。** 若新增内容更适合放入 `docs/` 的某个专题文档，则不要把它塞进本文件；只在这里留下入口。
-4. **修改流程或规范时同步更新文档。** 若更改了构建命令、模块分层、引脚分配或编码约定，应同时更新 `docs/` 或 `ARCHITECTURE.md` 中对应文件，避免文档腐烂。
+4. **修改流程或规范时同步更新文档。** 若更改了构建命令、模块分层、引脚分配或编码约定，应同时更新 `docs/` 或 `ARCHITECTURE.md`/`RELEASE.md` 等对应文件，避免文档腐烂。
 
 ---
 

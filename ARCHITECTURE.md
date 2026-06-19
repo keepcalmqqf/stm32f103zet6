@@ -429,6 +429,7 @@ USART1 TX (PA9) → PC 串口助手
 ## 相关文档
 
 - [设计原则](./docs/design-docs/core-beliefs.md)
+- [构建与发布流程](./RELEASE.md)
 - [硬件引脚分配](./HARDWARE_PINOUT.md)
 - [测试规范](./docs/TESTING.md)
 - [可靠性要求](./docs/RELIABILITY.md)
