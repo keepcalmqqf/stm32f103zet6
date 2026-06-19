@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led.h"
+#include "app_passthrough.h"
+#include "usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -203,5 +205,33 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
+
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET)
+  {
+    const uint8_t byte = (uint8_t)(huart1.Instance->DR & 0xFFU);
+    App_Passthrough_OnUsart1Rx(byte);
+  }
+
+  HAL_UART_IRQHandler(&huart1);
+}
+
+/**
+  * @brief This function handles USART2 global interrupt.
+  */
+void USART2_IRQHandler(void)
+{
+  if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) != RESET)
+  {
+    const uint8_t byte = (uint8_t)(huart2.Instance->DR & 0xFFU);
+    App_Passthrough_OnUsart2Rx(byte);
+  }
+
+  HAL_UART_IRQHandler(&huart2);
+}
 
 /* USER CODE END 1 */
