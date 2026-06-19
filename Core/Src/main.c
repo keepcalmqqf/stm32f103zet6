@@ -11,23 +11,18 @@
   *
   * This software is licensed under terms that can be found in the LICENSE file
   * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  * If a LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "usart.h"
-#include "gpio.h"
-#include "fsmc.h"
+#include "app_system.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led.h"
-#include "ili9486.h"
-#include "app_led_screen.h"
-#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,7 +43,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+volatile uint32_t g_fatal_error = 0U;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,9 +63,8 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
-  /* Early sanity indicator: turn LED1 on before HAL_Init. */
+  /* Early sanity indicator before HAL_Init. */
   LED_EarlyInit();
   /* USER CODE END 1 */
 
@@ -91,55 +85,19 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_FSMC_Init();
-  MX_USART1_UART_Init();
+
   /* USER CODE BEGIN 2 */
-  LED_Init();
-  USART1_Init();
-  printf("STM32F103ZET6 USART1 initialized: %lu baud\r\n", (unsigned long)USART1_BAUDRATE);
-
-  /* Diagnostic: blink LED2 and LED3 to confirm we reached init. */
-  LED_Blink(1, 6, 200);
-  LED_Blink(2, 6, 200);
-
-  ILI9486_Init();
-  uint32_t lcd_id = ILI9486_ReadID();
-  uint32_t lcd_status = ILI9486_ReadStatus();
-  printf("ILI9486 LCD initialized over FSMC, ID: 0x%06lX, status: 0x%08lX\r\n",
-         lcd_id, lcd_status);
-
-  ILI9486_FillScreen(ILI9486_BLUE);
-  HAL_Delay(500);
-  ILI9486_FillScreen(ILI9486_RED);
-  HAL_Delay(500);
-  ILI9486_FillScreen(ILI9486_GREEN);
-  HAL_Delay(500);
-  ILI9486_FillScreen(ILI9486_BLACK);
+  if (!App_System_Init())
+  {
+    g_fatal_error = 3U;
+    Error_Handler();
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-    uint8_t led_index = LED_ToggleNext();
-    uint16_t screen_color = AppLedScreen_GetColor(led_index);
-
-    /* Brief blackout to make the transition visible. */
-    ILI9486_FillScreen(ILI9486_BLACK);
-    HAL_Delay(200);
-
-    ILI9486_FillScreen(screen_color);
-    printf("LED %u ON -> screen %s (0x%04X)\r\n",
-           (unsigned int)(led_index + 1U),
-           AppLedScreen_GetName(led_index),
-           (unsigned int)screen_color);
-    HAL_Delay(5000);
-  }
-  /* USER CODE END 3 */
+  App_System_Run();
+  /* USER CODE END WHILE */
 }
 
 /**
@@ -163,6 +121,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
+    g_fatal_error = 1U;
     Error_Handler();
   }
 
@@ -177,6 +136,7 @@ void SystemClock_Config(void)
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
+    g_fatal_error = 2U;
     Error_Handler();
   }
 }
@@ -194,8 +154,20 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+
+  /* Flash LED1 to indicate a fatal initialization error.
+     The number of flashes before a pause equals g_fatal_error. */
+  LED_EarlyInit();
   while (1)
   {
+    for (uint32_t i = 0U; i < g_fatal_error; i++)
+    {
+      LED_On(0);
+      for (volatile uint32_t j = 0U; j < 500000U; j++) { __NOP(); }
+      LED_Off(0);
+      for (volatile uint32_t j = 0U; j < 500000U; j++) { __NOP(); }
+    }
+    for (volatile uint32_t j = 0U; j < 2000000U; j++) { __NOP(); }
   }
   /* USER CODE END Error_Handler_Debug */
 }

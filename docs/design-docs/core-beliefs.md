@@ -48,3 +48,6 @@
 | 2026-06-19 | 采用 STM32CubeMX + CMake 预设构建 | 统一构建环境，支持命令行与 IDE | `CMakeLists.txt`, `CMakePresets.json` |
 | 2026-06-19 | FSMC 使用 SRAM 模式驱动 LCD | 避免 NOR CFI 命令干扰 8080 并口屏 | `Core/Src/fsmc.c`, `HARDWARE_PINOUT.md` |
 | 2026-06-19 | printf 重定向到 USART1 | 无调试器时仍可排查问题 | `Core/Src/usart.c` |
+| 2026-06-19 | 通过 ESP32-C3 AT 固件获取网络时间 | 板载无以太网，利用现有 WiFi/蓝牙模块同步 NTP | `Core/BSP/Src/esp_wifi.c`, `Core/App/Src/app_time_sync.c` |
+| 2026-06-19 | RTC 驱动扩展日期支持 | NTP 返回完整日期，RTC 需要同时保存年月日 | `Core/BSP/Src/rtc.c`, `Core/BSP/Inc/rtc.h` |
+| 2026-06-19 | 应用层拆分为 system / ui / time_sync / config | 降低 main.c 耦合，提高内聚与可维护性 | `Core/App/Src/app_*.c`, `Core/App/Inc/app_*.h`, `ARCHITECTURE.md` |
