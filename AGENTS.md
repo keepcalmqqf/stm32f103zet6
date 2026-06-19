@@ -45,6 +45,7 @@
 - 不要在 `Core/Src/main.c` 等生成文件的非 `/* USER CODE BEGIN/END ... */` 区域手写代码。
 - 不要把新源码加到 `cmake/stm32cubemx/CMakeLists.txt`；应通过根目录 `CMakeLists.txt` 添加。
 - 不要硬编码 Magic Number、延时循环或 GPIO 状态而不加注释。
+- 不要把业务逻辑、WiFi 凭证、NTP 服务器等配置直接写在 `main.c`；应放到 `Core/App/` 层并由 `app_config.h` 集中管理。
 - 不要随意复用 `PA13` / `PA14`（默认 SWD 调试口）。
 - 不要提交 `build/`、`.idea/` 运行配置或 IDE 临时文件。
 
@@ -74,8 +75,9 @@ STM32_Programmer_CLI -c port=SWD -w build/Debug/stm32f103zet6.elf -v -rst
 
 | 主题 | 文档 |
 |------|------|
-| 架构与数据流 | `ARCHITECTURE.md` |
+| 架构与数据流 / 模块分层说明 | `ARCHITECTURE.md` |
 | 构建、烧录与发布流程 | `RELEASE.md` |
+| 新增模块应放哪里（BSP / App / Config） | `ARCHITECTURE.md` 第 2、6 节 |
 | 硬件引脚分配 | `HARDWARE_PINOUT.md` |
 | 设计原则与决策 | `docs/design-docs/` |
 | 执行计划 | `docs/exec-plans/` |
