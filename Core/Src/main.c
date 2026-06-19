@@ -172,8 +172,33 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    /* Keep the LCD background color in sync with the currently lit LED.
+       NOTE: if the physical LED colors on your board differ from the
+       mapping below, adjust the led_screen_colors table. */
+    static const uint16_t led_screen_colors[LED_COUNT] =
+    {
+      ILI9486_YELLOW, /* LED1 -> yellow */
+      ILI9486_BLUE,   /* LED2 -> blue */
+      ILI9486_GREEN,  /* LED3 -> green */
+    };
+    static const char *led_color_names[LED_COUNT] =
+    {
+      "YELLOW",
+      "BLUE",
+      "GREEN",
+    };
+
     uint8_t led_index = LED_ToggleNext();
-    printf("LED %u ON\r\n", (unsigned int)(led_index + 1U));
+
+    /* Brief blackout to make the transition visible. */
+    ILI9486_FillScreen(ILI9486_BLACK);
+    HAL_Delay(200);
+
+    ILI9486_FillScreen(led_screen_colors[led_index]);
+    printf("LED %u ON -> screen %s (0x%04X)\r\n",
+           (unsigned int)(led_index + 1U),
+           led_color_names[led_index],
+           (unsigned int)led_screen_colors[led_index]);
     HAL_Delay(5000);
   }
   /* USER CODE END 3 */
