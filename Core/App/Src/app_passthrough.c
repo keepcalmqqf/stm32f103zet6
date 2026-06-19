@@ -81,6 +81,13 @@ void App_Passthrough_Init(void)
 
 void App_Passthrough_Start(void)
 {
+    /* Enable RX interrupts only after the AT command phase is complete.
+       If they are enabled earlier, the ISR reads USART2->DR before
+       HAL_UART_Receive() in esp_wifi.c can see the byte, corrupting
+       the AT command exchange. */
+    USART1_InitRxInterrupt();
+    USART2_InitRxInterrupt();
+
     s_active = true;
 }
 

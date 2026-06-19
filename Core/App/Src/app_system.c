@@ -44,8 +44,6 @@ static bool App_System_InitBoard(void)
     USART1_Init();
     APP_LOG_INFO("USART1 initialized: %lu baud", (unsigned long)USART1_BAUDRATE);
 
-    USART1_InitRxInterrupt();
-    USART2_InitRxInterrupt();
     App_Passthrough_Init();
     APP_LOG_INFO("Passthrough bridge initialized");
 
