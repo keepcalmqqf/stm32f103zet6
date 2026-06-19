@@ -1,49 +1,97 @@
-# Agent Notes: stm32f103zet6
+<!-- AGENTS.md — stm32f103zet6 -->
 
-STM32CubeMX-generated CMake project for STM32F103ZET6 (ARM Cortex-M3). Firmware lives in `Core/`, HAL/Drivers are vendored under `Drivers/`.
+> 面向 AI 编码助手的项目地图。详细指南见 `docs/` 目录。
+>
+> 冲突解决优先级：**用户显式提示 > 本文件 > 子目录 AGENTS.md**。
 
-## Build
+---
 
-- Requires `arm-none-eabi-gcc` on PATH (tested with GNU Tools for STM32 14.3.rel1) and CMake >= 3.22.
-- Preset-based build (Ninja generator):
-  - `cmake --preset Debug`
-  - `cmake --build --preset Debug`
-  - Release: replace `Debug` with `Release`.
-- Output: `build/Debug/stm32f103zet6.elf` and `.map`.
-- Toolchain: `cmake/gcc-arm-none-eabi.cmake` (default). `cmake/starm-clang.cmake` exists as an alternative but is not wired into presets.
+## 项目是什么
 
-## Project structure
+- **名称**：`stm32f103zet6`
+- **类型**：STM32CubeMX 生成的 CMake 固件工程
+- **目标 MCU**：STM32F103ZET6（ARM Cortex-M3，LQFP144，72 MHz）
+- **技术栈**：STM32 HAL + CMake + Ninja + arm-none-eabi-gcc
+- **配置源文件**：`stm32f103zet6.ioc`
 
-- `stm32f103zet6.ioc` — STM32CubeMX configuration source of truth. Regenerating from it will overwrite `Core/Src`, `Core/Inc`, `Drivers/`, `cmake/stm32cubemx/CMakeLists.txt`, and startup/linker files. Hand-edits in generated sections will be lost.
-- `Core/Src/main.c` — application entry point. CubeMX inserts `/* USER CODE BEGIN/END ... */` guard blocks; keep custom code inside those blocks to survive regeneration.
-- `Core/Src/gpio.c`, `Core/Inc/gpio.h` — GPIO init (LED1/LED2/LED3 on PA0/PA1/PA8).
-- `Core/Src/stm32f1xx_it.c`, `stm32f1xx_hal_msp.c` — interrupt and MSP handlers.
-- `cmake/stm32cubemx/CMakeLists.txt` — generated source list and compile definitions (`USE_HAL_DRIVER`, `STM32F103xE`).
-- `startup_stm32f103xe.s` and `STM32F103XX_FLASH.ld` — startup and linker script.
+---
 
-## Adding code
+## 做任何事前先执行
 
-- Add new source files via `target_sources(${CMAKE_PROJECT_NAME} PRIVATE ...)` in root `CMakeLists.txt` (line ~46), not by editing the generated `cmake/stm32cubemx/CMakeLists.txt`.
-- Add include paths and macros in root `CMakeLists.txt` (lines ~51 and ~56).
-- C standard is C11; the generated code rejects C90/C99 (see `cmake/stm32cubemx/CMakeLists.txt` validation).
+1. 修改 `stm32f103zet6.ioc` 后 → 用 STM32CubeMX 重新生成代码：
 
-## Verification
+   ```bash
+   STM32CubeMX -s scripts/cubemx_generate.script
+   ```
 
-- There are no automated tests, lint, or CI configs in this repo.
-- The only practical verification is a clean build: `cmake --build --preset Debug`.
-- To inspect the binary: `arm-none-eabi-size build/Debug/stm32f103zet6.elf` or `arm-none-eabi-objdump -h build/Debug/stm32f103zet6.elf`.
+2. 修改用户源码后 → 重新构建：
 
-## Flashing (ST-Link)
+   ```bash
+   cmake --build --preset Debug
+   ```
 
-- Use **STM32CubeProgrammer CLI** (`STM32_Programmer_CLI`) which ships with STM32CubeCLT.
-- Typical command after build:
-  ```bash
-  STM32_Programmer_CLI -c port=SWD -w build/Debug/stm32f103zet6.elf -v -rst
-  ```
-- To target a specific probe when multiple are connected, add `sn=<serial>` (find serial via `STM32_Programmer_CLI --list`).
-- If the CLI is not on PATH, it usually lives under `D:\STM32CubeCLT_1.x.x\STM32CubeProgrammer\bin` on Windows.
+3. 提交前 →
 
-## IDE / environment
+   ```bash
+   cmake --build --preset Debug
+   arm-none-eabi-size build/Debug/stm32f103zet6.elf
+   ```
 
-- `.idea/` contains JetBrains run configurations for ST-Link debugging. Do not commit IDE-specific changes unless intended.
-- `compile_commands.json` is generated in `build/Debug/`; useful for clangd/language servers.
+---
+
+## 禁止做的事（会覆盖代码 / 引入 Bug）
+
+- 不要手动修改 `cmake/stm32cubemx/CMakeLists.txt`、启动文件或链接脚本。
+- 不要在 `Core/Src/main.c` 等生成文件的非 `/* USER CODE BEGIN/END ... */` 区域手写代码。
+- 不要把新源码加到 `cmake/stm32cubemx/CMakeLists.txt`；应通过根目录 `CMakeLists.txt` 添加。
+- 不要硬编码 Magic Number、延时循环或 GPIO 状态而不加注释。
+- 不要随意复用 `PA13` / `PA14`（默认 SWD 调试口）。
+- 不要提交 `build/`、`.idea/` 运行配置或 IDE 临时文件。
+
+---
+
+## 常用命令
+
+```bash
+# 构建
+cmake --preset Debug
+cmake --build --preset Debug
+
+# Release
+cmake --preset Release
+cmake --build --preset Release
+
+# 检查体积
+arm-none-eabi-size build/Debug/stm32f103zet6.elf
+
+# ST-Link 烧录
+STM32_Programmer_CLI -c port=SWD -w build/Debug/stm32f103zet6.elf -v -rst
+```
+
+---
+
+## 项目地图
+
+| 主题 | 文档 |
+|------|------|
+| 架构与数据流 | `ARCHITECTURE.md` |
+| 构建、烧录与发布流程 | `RELEASE.md` |
+| 硬件引脚分配 | `HARDWARE_PINOUT.md` |
+| 设计原则与决策 | `docs/design-docs/` |
+| 执行计划 | `docs/exec-plans/` |
+| 产品规格 | `docs/product-specs/` |
+| 参考资料 | `docs/references/` |
+| 设计系统 / UI | `docs/DESIGN.md` |
+| 测试策略 | `docs/TESTING.md` |
+| 安全与敏感信息 | `docs/SECURITY.md` |
+| 提交规范 | `docs/COMMITS.md` |
+| 质量评分 | `docs/QUALITY_SCORE.md` |
+| 可靠性要求 | `docs/RELIABILITY.md` |
+
+---
+
+## 维护说明
+
+- 本文件遵循 [agents.md](https://agents.md/) 与 [OpenAI Harness Engineering](https://openai.com/zh-Hans-CN/index/harness-engineering/) 原则。
+- 若修改了本文件指向的流程、命令或规范，请同步更新 `docs/` 中对应文件。
+- 子目录如需更具体的 Agent 指引，可创建嵌套 `AGENTS.md`；最接近目标文件的版本优先级最高。

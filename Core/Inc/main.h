@@ -65,7 +65,7 @@ void Error_Handler(void);
 #define LED3_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
-
+/* LCD control pins are defined in ili9486.h to keep the LCD driver self-contained. */
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -20,10 +20,13 @@
 #include "main.h"
 #include "usart.h"
 #include "gpio.h"
+#include "fsmc.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "led.h"
+#include "ili9486.h"
+#include "app_led_screen.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -67,7 +70,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  /* Early sanity indicator: turn LED1 on before HAL_Init. */
+  LED_EarlyInit();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -88,11 +92,30 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_FSMC_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   LED_Init();
   USART1_Init();
   printf("STM32F103ZET6 USART1 initialized: %lu baud\r\n", (unsigned long)USART1_BAUDRATE);
+
+  /* Diagnostic: blink LED2 and LED3 to confirm we reached init. */
+  LED_Blink(1, 6, 200);
+  LED_Blink(2, 6, 200);
+
+  ILI9486_Init();
+  uint32_t lcd_id = ILI9486_ReadID();
+  uint32_t lcd_status = ILI9486_ReadStatus();
+  printf("ILI9486 LCD initialized over FSMC, ID: 0x%06lX, status: 0x%08lX\r\n",
+         lcd_id, lcd_status);
+
+  ILI9486_FillScreen(ILI9486_BLUE);
+  HAL_Delay(500);
+  ILI9486_FillScreen(ILI9486_RED);
+  HAL_Delay(500);
+  ILI9486_FillScreen(ILI9486_GREEN);
+  HAL_Delay(500);
+  ILI9486_FillScreen(ILI9486_BLACK);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,7 +126,17 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     uint8_t led_index = LED_ToggleNext();
-    printf("LED %u ON\r\n", (unsigned int)(led_index + 1U));
+    uint16_t screen_color = AppLedScreen_GetColor(led_index);
+
+    /* Brief blackout to make the transition visible. */
+    ILI9486_FillScreen(ILI9486_BLACK);
+    HAL_Delay(200);
+
+    ILI9486_FillScreen(screen_color);
+    printf("LED %u ON -> screen %s (0x%04X)\r\n",
+           (unsigned int)(led_index + 1U),
+           AppLedScreen_GetName(led_index),
+           (unsigned int)screen_color);
     HAL_Delay(5000);
   }
   /* USER CODE END 3 */

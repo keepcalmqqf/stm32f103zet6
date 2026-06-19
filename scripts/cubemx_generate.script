@@ -1,0 +1,5 @@
+config load "D:/coding/embedded/stm32f103zet6/stm32f103zet6.ioc"
+project name stm32f103zet6
+project path "D:/coding/embedded/stm32f103zet6"
+project generate
+exit

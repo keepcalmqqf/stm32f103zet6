@@ -43,6 +43,20 @@ static void LED_Write(uint8_t index, GPIO_PinState state)
 }
 
 /* Exported functions --------------------------------------------------------*/
+void LED_EarlyInit(void)
+{
+    /* Minimal early init: enable clock and turn LED1 on before HAL_Init.
+       Used as a first-run sanity indicator. */
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitStruct.Pin = LED1_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(LED1_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET); /* Active low: on */
+}
+
 void LED_Init(void)
 {
     led_current = 0;
@@ -74,4 +88,20 @@ uint8_t LED_ToggleNext(void)
     uint8_t on_index = led_current;
     led_current = (led_current + 1) % LED_COUNT;
     return on_index;
+}
+
+void LED_Blink(uint8_t index, uint8_t times, uint32_t period_ms)
+{
+    if (index >= LED_COUNT)
+    {
+        return;
+    }
+
+    for (uint8_t i = 0; i < times; i++)
+    {
+        LED_On(index);
+        HAL_Delay(period_ms / 2U);
+        LED_Off(index);
+        HAL_Delay(period_ms / 2U);
+    }
 }

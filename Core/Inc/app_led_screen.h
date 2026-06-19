@@ -1,14 +1,16 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    led.h
-  * @brief   LED abstraction layer header.
+  * @file    app_led_screen.h
+  * @brief   Application-level mapping between LEDs and LCD screen colors.
+  *          Keeps the demo business rule (which LED maps to which screen color)
+  *          out of main.c.
   ******************************************************************************
   */
 /* USER CODE END Header */
 
-#ifndef __LED_H__
-#define __LED_H__
+#ifndef APP_LED_SCREEN_H
+#define APP_LED_SCREEN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,20 +19,12 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
 
-/* Exported defines ----------------------------------------------------------*/
-#define LED_COUNT 3
-
 /* Exported functions prototypes ---------------------------------------------*/
-void LED_EarlyInit(void);
-void LED_Init(void);
-void LED_AllOff(void);
-void LED_On(uint8_t index);
-void LED_Off(uint8_t index);
-uint8_t LED_ToggleNext(void);
-void LED_Blink(uint8_t index, uint8_t times, uint32_t period_ms);
+uint16_t AppLedScreen_GetColor(uint8_t led_index);
+const char *AppLedScreen_GetName(uint8_t led_index);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __LED_H__ */
+#endif /* APP_LED_SCREEN_H */

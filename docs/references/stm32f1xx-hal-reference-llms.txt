@@ -1,0 +1,33 @@
+STM32F1xx HAL 快速参考
+
+本文件为智能体提供 STM32F1xx HAL 库的关键模式与常见 API，用于编码时快速查阅。
+
+---
+
+时钟与 GPIO
+- 使能时钟：__HAL_RCC_GPIOx_CLK_ENABLE()、__HAL_RCC_USART1_CLK_ENABLE()、__HAL_RCC_FSMC_CLK_ENABLE()
+- GPIO 初始化：HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init)
+- GPIO 写：HAL_GPIO_WritePin(GPIOx, GPIO_Pin, PinState)
+- GPIO 读：HAL_GPIO_ReadPin(GPIOx, GPIO_Pin)
+- GPIO 翻转：HAL_GPIO_TogglePin(GPIOx, GPIO_Pin)
+- 复用推挽：GPIO_MODE_AF_PP
+
+延时
+- HAL_Delay(uint32_t Delay)：阻塞延时，单位 ms
+- 注意：不能在中断服务程序中调用
+
+USART
+- 发送：HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)
+- 常用配置：115200 8N1，UART_WORDLENGTH_8B，UART_STOPBITS_1，UART_PARITY_NONE
+- printf 重定向：实现 int __io_putchar(int ch)
+
+FSMC / SRAM
+- 初始化：HAL_SRAM_Init(SRAM_HandleTypeDef *hsram, FSMC_NORSRAM_TimingTypeDef *Timing, FSMC_NORSRAM_TimingTypeDef *ExtTiming)
+- Bank 选择：FSMC_NORSRAM_BANK1..4 对应 NE1..NE4
+- 数据宽度：FSMC_NORSRAM_MEM_BUS_WIDTH_16
+- 内存类型：FSMC_MEMORY_TYPE_SRAM（驱动 LCD 时推荐）
+- 扩展模式：ExtendedMode = ENABLE 可分别配置读/写时序
+
+错误处理
+- HAL 函数返回 HAL_OK / HAL_ERROR / HAL_BUSY / HAL_TIMEOUT
+- 出现严重错误时调用 Error_Handler() 进入死循环
