@@ -62,6 +62,11 @@ static void esp_enable_pin_init(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(APP_ESP_EN_GPIO_PORT, &GPIO_InitStruct);
 
+    /* Hard reset the ESP32-C3: pull EN low for 100 ms, then release.
+       This guarantees a clean power-on reset regardless of the pin's
+       previous state. */
+    HAL_GPIO_WritePin(APP_ESP_EN_GPIO_PORT, APP_ESP_EN_GPIO_PIN, GPIO_PIN_RESET);
+    HAL_Delay(100U);
     HAL_GPIO_WritePin(APP_ESP_EN_GPIO_PORT, APP_ESP_EN_GPIO_PIN, GPIO_PIN_SET);
 }
 
