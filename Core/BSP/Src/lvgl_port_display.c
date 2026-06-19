@@ -16,11 +16,12 @@
 #define DISP_HOR_RES 320U
 #define DISP_VER_RES 480U
 
-/* Partial buffer: one tile of 1/20 screen height to save RAM. */
+/* Partial buffer: one tile of 1/20 screen height to save RAM.
+ * Aligned to LVGL's draw buffer alignment requirement. */
 #define DRAW_BUF_LINES (DISP_VER_RES / 20U)
 #define DRAW_BUF_SIZE  (DISP_HOR_RES * DRAW_BUF_LINES)
 
-static lv_color_t s_draw_buf[DRAW_BUF_SIZE];
+static lv_color_t __attribute__((aligned(LV_DRAW_BUF_ALIGN))) s_draw_buf[DRAW_BUF_SIZE];
 
 /**
  * @brief  LVGL flush callback: copy the rendered pixels to the LCD.

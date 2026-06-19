@@ -81,7 +81,16 @@ void App_UI_UpdateClock(uint16_t year, uint8_t month, uint8_t day,
     lv_label_set_text(s_time_label, time_buf);
 }
 
-void App_UI_Handler(void)
+uint32_t App_UI_Handler(void)
 {
-    lv_timer_handler();
+    uint32_t time_till_next = lv_timer_handler();
+
+    /* LV_NO_TIMER_READY means nothing needs immediate service;
+       fall back to the default refresh period so we poll again soon. */
+    if (time_till_next == LV_NO_TIMER_READY)
+    {
+        time_till_next = APP_UI_REFRESH_MS;
+    }
+
+    return time_till_next;
 }

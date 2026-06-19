@@ -133,7 +133,7 @@ void App_System_Run(void)
             last_time_update = now;
         }
 
-        App_UI_Handler();
-        HAL_Delay(APP_UI_REFRESH_MS);
+        const uint32_t ui_delay_ms = App_UI_Handler();
+        HAL_Delay(ui_delay_ms);
     }
 }

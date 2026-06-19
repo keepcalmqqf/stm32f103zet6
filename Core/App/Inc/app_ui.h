@@ -39,9 +39,10 @@ void App_UI_UpdateClock(uint16_t year, uint8_t month, uint8_t day,
 
 /**
  * @brief  Run one iteration of the LVGL timer handler.
- * @note   Caller is responsible for pacing this function (typically every 33 ms).
+ * @return Time in milliseconds until the next call is recommended.
+ * @note   Caller should sleep for the returned duration; see lv_timer_handler().
  */
-void App_UI_Handler(void);
+uint32_t App_UI_Handler(void);
 
 #ifdef __cplusplus
 }
