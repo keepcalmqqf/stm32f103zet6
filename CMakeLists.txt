@@ -60,6 +60,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/App/Src/app_ui.c
     Core/App/Src/app_time_sync.c
     Core/App/Src/app_system.c
+    Core/App/Src/app_passthrough.c
     Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc.c
 )
 
