@@ -10,13 +10,17 @@
 
 ```text
 ┌─────────────────────────────────────────────┐
-│  Application (main.c)                       │
+│  Application (main.c + App/)                │
 │  - 初始化流程：HAL → 时钟 → GPIO/FSMC/USART │
-│  - 业务循环：LED 轮询 + 日志输出             │
+│  - 业务循环：LVGL 实时时钟界面              │
 ├─────────────────────────────────────────────┤
 │  Board Support (BSP)                        │
-│  - led.c / ili9486.c / usart.c              │
+│  - led.c / ili9486.c / rtc.c                │
+│  - lvgl_port_display.c                      │
 │  - 封装硬件细节，提供可移植 API              │
+├─────────────────────────────────────────────┤
+│  Middlewares                                │
+│  - Middlewares/LVGL/  (GUI 库)              │
 ├─────────────────────────────────────────────┤
 │  STM32CubeMX Generated Layer                │
 │  - gpio.c / fsmc.c / usart.c (MX_*)         │
@@ -35,16 +39,37 @@
 ```text
 stm32f103zet6/
 ├── Core/
-│   ├── Inc/              # 用户头文件
+│   ├── Inc/              # CubeMX 生成头文件
 │   │   ├── main.h        # 公共宏、Error_Handler 声明
-│   │   ├── led.h         # LED 抽象层
-│   │   ├── usart.h       # USART1 驱动
-│   │   └── ili9486.h     # ILI9486 LCD 驱动
-│   └── Src/              # 用户源文件
-│       ├── main.c        # 应用入口与主循环
-│       ├── led.c         # LED 驱动实现
-│       ├── usart.c       # USART1 + printf 重定向
-│       └── ili9486.c     # FSMC 8080 并口 LCD 驱动
+│   │   ├── gpio.h        # GPIO 初始化头文件
+│   │   ├── fsmc.h        # FSMC 初始化头文件
+│   │   ├── usart.h       # USART1 初始化头文件
+│   │   └── stm32f1xx_hal_conf.h  # HAL 配置文件
+│   ├── Src/              # CubeMX 生成源文件
+│   │   ├── main.c        # 应用入口与主循环
+│   │   ├── gpio.c        # GPIO 初始化
+│   │   ├── fsmc.c        # FSMC 初始化
+│   │   ├── usart.c       # USART1 初始化
+│   │   ├── stm32f1xx_it.c
+│   │   └── stm32f1xx_hal_msp.c
+│   ├── BSP/              # 板级支持包：用户硬件驱动
+│   │   ├── Inc/
+│   │   │   ├── led.h
+│   │   │   ├── ili9486.h
+│   │   │   ├── rtc.h
+│   │   │   └── lvgl_port_display.h
+│   │   └── Src/
+│   │       ├── led.c
+│   │       ├── ili9486.c
+│   │       ├── rtc.c
+│   │       └── lvgl_port_display.c
+│   └── App/              # 应用层：业务逻辑
+│       ├── Inc/
+│       │   └── app_led_screen.h
+│       └── Src/
+│           └── app_led_screen.c
+├── Middlewares/
+│   └── LVGL/             # LVGL v9 图形库
 ├── cmake/
 │   ├── gcc-arm-none-eabi.cmake   # 默认工具链
 │   ├── starm-clang.cmake         # 备用 Clang 工具链
@@ -55,7 +80,9 @@ stm32f103zet6/
 │   └── STM32F1xx_HAL_Driver/   # HAL 库源码
 ├── docs/                 # 项目文档
 ├── AGENTS.md             # AI 编码助手指引
+├── ARCHITECTURE.md       # 架构与数据流
 ├── HARDWARE_PINOUT.md    # 核心板引脚分配
+├── lv_conf.h             # LVGL 配置文件
 ├── CMakeLists.txt        # 根构建文件
 ├── CMakePresets.json     # Debug/Release 预设
 ├── stm32f103zet6.ioc     # STM32CubeMX 配置源文件
@@ -72,8 +99,13 @@ stm32f103zet6/
 | `Core/Src/gpio.c` / `Inc/gpio.h` | GPIO 初始化（LED1/2/3 等） | 是 |
 | `Core/Src/fsmc.c` / `Inc/fsmc.h` | FSMC 初始化，用于 16 位 8080 并行 LCD | 是 |
 | `Core/Src/usart.c` / `Inc/usart.h` | USART1 初始化（`MX_*` 部分） | 是 |
-| `Core/Src/led.c` / `Inc/led.h` | 用户 LED 抽象层 | 否 |
-| `Core/Src/ili9486.c` / `Inc/ili9486.h` | ILI9486 LCD 驱动 | 否 |
+| `Core/BSP/Src/led.c` / `Inc/led.h` | 用户 LED 抽象层 | 否 |
+| `Core/BSP/Src/ili9486.c` / `Inc/ili9486.h` | ILI9486 LCD 驱动 | 否 |
+| `Core/BSP/Src/rtc.c` / `Inc/rtc.h` | 实时时钟驱动（LSE 32.768 kHz） | 否 |
+| `Core/BSP/Src/lvgl_port_display.c` / `Inc/lvgl_port_display.h` | LVGL 显示端口（ILI9486 flush_cb） | 否 |
+| `Core/App/Src/app_led_screen.c` / `Inc/app_led_screen.h` | LED 与屏幕颜色映射业务逻辑 | 否 |
+| `Middlewares/LVGL/` | LVGL v9.2 图形库 | 否（第三方库） |
+| `lv_conf.h` | LVGL 配置文件 | 否 |
 | `cmake/stm32cubemx/CMakeLists.txt` | CubeMX 生成的源文件列表 | 是（禁止手动编辑） |
 | `CMakeLists.txt` | 根构建文件，添加用户源码/宏/头文件路径的位置 | 否 |
 | `startup_stm32f103xe.s` | 启动汇编 | 是 |
@@ -106,31 +138,34 @@ main()
     │   ├── LCD 背光 PB0、复位 PG15
     │   ├── LED_Init()
     │   ├── USART1_Init()
-    │   └── ILI9486_Init()
+    │   ├── ILI9486_Init()
+    │   ├── RTC_BspInit()
+    │   └── lv_init() + LVGL_PortDisplayInit()
     │
     └── while (1) 主循环
-            ├── LED_ToggleNext()
-            ├── printf 日志
-            └── HAL_Delay(5000)
+            ├── RTC_GetTime() 读取实时时钟
+            ├── lv_label_set_text() 更新时间标签
+            ├── lv_timer_handler() 刷新 LVGL
+            └── LED_ToggleNext()
 ```
 
 ---
 
 ## 4. 模块说明
 
-### 4.1 LED 抽象层 (`led.c` / `led.h`)
+### 4.1 LED 抽象层 (`Core/BSP/Src/led.c` / `Core/BSP/Inc/led.h`)
 
 - 封装硬件极性：LED 为**低电平点亮**。
 - 提供 `LED_On/Off/AllOff/ToggleNext` 等 API。
 - 引脚映射来自 CubeMX 生成的 `main.h`（`LED1_Pin`、`LED2_Pin`、`LED3_Pin`）。
 
-### 4.2 USART1 调试输出 (`usart.c` / `usart.h`)
+### 4.2 USART1 调试输出 (`Core/Src/usart.c` / `Core/Inc/usart.h`)
 
 - 配置：115200 8N1，TX=PA9，RX=PA10。
 - `printf` 通过 `__io_putchar` 重定向到 USART1，方便无调试器时排查问题。
 - 避免在 USART 中断服务程序中调用 `printf`。
 
-### 4.3 ILI9486 LCD 驱动 (`ili9486.c` / `ili9486.h`)
+### 4.3 ILI9486 LCD 驱动 (`Core/BSP/Src/ili9486.c` / `Core/BSP/Inc/ili9486.h`)
 
 - 通过 **FSMC 16 位 8080 并行总线** 访问 ILI9486 控制器。
 - 控制器目标：Z350IT002 3.5 寸屏，分辨率 320×480。
@@ -140,33 +175,48 @@ main()
 - 提供初始化、复位、读 ID、读状态、填色、画点、画线、设置旋转等 API。
 - 颜色格式：RGB565。
 
-### 4.4 FSMC 配置 (`fsmc.c` / `fsmc.h`)
+### 4.4 FSMC 配置 (`Core/Src/fsmc.c` / `Core/Inc/fsmc.h`)
 
 - 使用 **FSMC Bank4（NE4）**，16 位数据宽度，SRAM 模式。
 - 地址/数据线按核心板原理图连接（详见 `HARDWARE_PINOUT.md`）。
 - 读写时序分开配置（`ExtendedMode = ENABLE`），适配 LCD 8080 时序。
 - `__HAL_AFIO_FSMCNADV_DISCONNECTED()` 断开 NADV，避免干扰。
 
+### 4.5 RTC 实时时钟 (`Core/BSP/Src/rtc.c` / `Core/BSP/Inc/rtc.h`)
+
+- 使用外部 32.768 kHz LSE 作为 RTC 时钟源。
+- 首次上电以固件编译时间作为初始时间，VBAT 供电时可保持走时。
+- 提供 `RTC_GetTime()` / `RTC_SetTime()` API。
+
+### 4.6 LVGL 显示端口 (`Core/BSP/Src/lvgl_port_display.c` / `Core/BSP/Inc/lvgl_port_display.h`)
+
+- 把 ILI9486 封装为 LVGL v9 的显示驱动。
+- 实现 `flush_cb`，通过 `ILI9486_SetAddressWindow()` + FSMC 数据口写入局部刷新像素。
+- 使用 partial 渲染模式，单缓冲约 7.5 KB。
+
 ---
 
 ## 5. 数据流示例
 
-### 5.1 LCD 写像素
+### 5.1 LVGL 刷新时间标签
 
 ```text
-App: ILI9486_DrawPixel(x, y, color)
+App: lv_label_set_text(label, "12:34:56")
     │
     ▼
-ili9486.c: ILI9486_SetAddressWindow(...)  →  写 0x2A/0x2B 设置窗口
+lvgl: 在 draw_buf 中渲染文字像素
     │
     ▼
-ili9486.c: ILI9486_WriteCmd(0x2C)        →  命令口地址 0x6C000000
+lvgl_port_display.c: flush_cb(area, px_map)
     │
     ▼
-ili9486.c: ILI9486_WriteData(color)      →  数据口地址 0x6C000800
+ili9486.c: ILI9486_SetAddressWindow(x0, y0, x1, y1)
     │
     ▼
-FSMC 外设 → GPIO D/E/G → LCD 8080 接口
+FSMC 数据口 0x6C000800 → 写入 RGB565 像素
+    │
+    ▼
+LCD 8080 接口显示更新
 ```
 
 ### 5.2 调试日志输出
@@ -192,8 +242,11 @@ USART1 TX → PA9 → USB-TTL 串口工具
    - `Core/Src/main.c`、`gpio.c`、`fsmc.c` 等由 STM32CubeMX 生成。
    - 用户逻辑必须放在 `/* USER CODE BEGIN/END ... */` 保护块内，否则重新生成会被覆盖。
 
-2. **新增模块放 `Core/Src/` 与 `Core/Inc/`**
-   - 并在根 `CMakeLists.txt` 的 `target_sources(...)` 中注册。
+2. **新增模块按分层放置**
+   - 硬件驱动（BSP）放 `Core/BSP/Src/` 与 `Core/BSP/Inc/`。
+   - 应用逻辑放 `Core/App/Src/` 与 `Core/App/Inc/`。
+   - 第三方库放 `Middlewares/`。
+   - 在根 `CMakeLists.txt` 的 `target_sources(...)` 与 `target_include_directories(...)` 中注册。
 
 3. **BSP 层封装硬件差异**
    - 应用代码不直接操作 GPIO 端口/引脚，而是通过 `led.h` 等抽象接口。
@@ -210,7 +263,7 @@ USART1 TX → PA9 → USB-TTL 串口工具
 
 1. 在 `stm32f103zet6.ioc` 中配置外设与引脚。
 2. 用 STM32CubeMX 重新生成代码（`STM32CubeMX -s scripts/cubemx_generate.script`）。
-3. 在 `Core/Inc/` 与 `Core/Src/` 创建新的 BSP 驱动文件。
+3. 在 `Core/BSP/Inc/` 与 `Core/BSP/Src/` 创建新的 BSP 驱动文件。
 4. 在根 `CMakeLists.txt` 的 `target_sources(...)` 中添加新 `.c`。
 5. 在 `main.c` 的 `USER CODE BEGIN 2` 区域调用初始化函数。
 6. 构建并验证：

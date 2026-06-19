@@ -27,6 +27,9 @@
 #include "led.h"
 #include "ili9486.h"
 #include "app_led_screen.h"
+#include "rtc.h"
+#include "lvgl.h"
+#include "lvgl_port_display.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -48,7 +51,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+static lv_obj_t *s_time_label = NULL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -116,28 +119,57 @@ int main(void)
   ILI9486_FillScreen(ILI9486_GREEN);
   HAL_Delay(500);
   ILI9486_FillScreen(ILI9486_BLACK);
+
+  HAL_StatusTypeDef rtc_status = RTC_BspInit();
+  printf("RTC_BspInit status: %d\r\n", (int)rtc_status);
+
+  lv_init();
+  lv_tick_set_cb(HAL_GetTick);
+  LVGL_PortDisplayInit(ILI9486_WIDTH, ILI9486_HEIGHT);
+
+  s_time_label = lv_label_create(lv_screen_active());
+  lv_obj_set_style_text_font(s_time_label, &lv_font_montserrat_24, 0);
+  lv_obj_set_style_text_color(s_time_label, lv_color_hex(0x00FF00), 0);
+  lv_obj_align(s_time_label, LV_ALIGN_CENTER, 0, 0);
+  lv_label_set_text(s_time_label, "00:00:00");
+  printf("LVGL initialized with ILI9486 display port\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint32_t last_rtc_update = 0;
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    uint8_t led_index = LED_ToggleNext();
-    uint16_t screen_color = AppLedScreen_GetColor(led_index);
+    const uint32_t now = HAL_GetTick();
 
-    /* Brief blackout to make the transition visible. */
-    ILI9486_FillScreen(ILI9486_BLACK);
-    HAL_Delay(200);
+    if ((now - last_rtc_update) >= 1000U)
+    {
+      uint8_t hours = 0;
+      uint8_t minutes = 0;
+      uint8_t seconds = 0;
 
-    ILI9486_FillScreen(screen_color);
-    printf("LED %u ON -> screen %s (0x%04X)\r\n",
-           (unsigned int)(led_index + 1U),
-           AppLedScreen_GetName(led_index),
-           (unsigned int)screen_color);
-    HAL_Delay(5000);
+      if (RTC_GetTime(&hours, &minutes, &seconds) && (s_time_label != NULL))
+      {
+        char time_buf[16];
+        snprintf(time_buf, sizeof(time_buf), "%02u:%02u:%02u",
+                 (unsigned int)hours,
+                 (unsigned int)minutes,
+                 (unsigned int)seconds);
+        lv_label_set_text(s_time_label, time_buf);
+
+        printf("RTC time: %s\r\n", time_buf);
+      }
+
+      (void)LED_ToggleNext();
+      last_rtc_update = now;
+    }
+
+    lv_timer_handler();
+    HAL_Delay(LV_DEF_REFR_PERIOD);
   }
   /* USER CODE END 3 */
 }
