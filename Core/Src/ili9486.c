@@ -100,6 +100,44 @@ uint32_t ILI9486_ReadStatus(void)
 }
 
 /**
+  * @brief  Turn on LCD backlight and configure the control pin.
+  *         Backlight is active high on PB0.
+  */
+static void ILI9486_PowerOn(void)
+{
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitStruct.Pin = LCD_BG_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(LCD_BG_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_WritePin(LCD_BG_GPIO_Port, LCD_BG_Pin, GPIO_PIN_SET);
+}
+
+/**
+  * @brief  Hardware reset of the display controller.
+  *         Reset line is active low on PG15.
+  */
+static void ILI9486_HardwareReset(void)
+{
+    __HAL_RCC_GPIOG_CLK_ENABLE();
+
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitStruct.Pin = LCD_RST_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(LCD_RST_GPIO_Port, &GPIO_InitStruct);
+
+    HAL_GPIO_WritePin(LCD_RST_GPIO_Port, LCD_RST_Pin, GPIO_PIN_RESET);
+    HAL_Delay(20);
+    HAL_GPIO_WritePin(LCD_RST_GPIO_Port, LCD_RST_Pin, GPIO_PIN_SET);
+    HAL_Delay(120);
+}
+
+/**
   * @brief  Software reset of the display controller.
   */
 void ILI9486_Reset(void)
@@ -113,29 +151,31 @@ void ILI9486_Reset(void)
   */
 void ILI9486_Init(void)
 {
+    ILI9486_PowerOn();
+    ILI9486_HardwareReset();
     ILI9486_Reset();
 
-    /* Sleep out */
+    /* Sleep out (0x11) */
     ILI9486_WriteCmd(ILI9486_SLPOUT);
     HAL_Delay(20);
 
-    /* Interface pixel format: 16 bits/pixel */
+    /* Interface pixel format (0x3A): 16 bits/pixel */
     ILI9486_WriteCmd(ILI9486_PIXFMT);
     ILI9486_WriteData(0x55);
     HAL_Delay(10);
 
-    /* Power control 3 (for normal mode) */
+    /* Power control 3 (0xC2) for normal mode */
     ILI9486_WriteCmd(0xC2);
     ILI9486_WriteData(0x44);
 
-    /* VCOM control */
+    /* VCOM control (0xC5) */
     ILI9486_WriteCmd(0xC5);
     ILI9486_WriteData(0x00);
     ILI9486_WriteData(0x00);
     ILI9486_WriteData(0x00);
     ILI9486_WriteData(0x00);
 
-    /* PGAMCTRL: positive gamma */
+    /* Positive gamma control (0xE0) */
     ILI9486_WriteCmd(0xE0);
     ILI9486_WriteData(0x0F);
     ILI9486_WriteData(0x1F);
@@ -153,7 +193,7 @@ void ILI9486_Init(void)
     ILI9486_WriteData(0x0D);
     ILI9486_WriteData(0x00);
 
-    /* NGAMCTRL: negative gamma */
+    /* Negative gamma control (0xE1) */
     ILI9486_WriteCmd(0xE1);
     ILI9486_WriteData(0x0F);
     ILI9486_WriteData(0x32);
@@ -171,24 +211,24 @@ void ILI9486_Init(void)
     ILI9486_WriteData(0x20);
     ILI9486_WriteData(0x00);
 
-    /* Display inversion control */
+    /* Display inversion control (0xB4) */
     ILI9486_WriteCmd(0xB4);
     ILI9486_WriteData(0x02);
 
-    /* Display function control */
+    /* Display function control (0xB6) */
     ILI9486_WriteCmd(0xB6);
     ILI9486_WriteData(0x02);
     ILI9486_WriteData(0x02);
     ILI9486_WriteData(0x3B);
 
-    /* Entry mode set */
+    /* Entry mode set (0xB7) */
     ILI9486_WriteCmd(0xB7);
     ILI9486_WriteData(0x06);
 
-    /* Memory access control: RGB order, landscape */
+    /* Memory access control (0x36): RGB order, landscape */
     ILI9486_SetRotation(0);
 
-    /* Display on */
+    /* Display on (0x29) */
     ILI9486_WriteCmd(ILI9486_DISPON);
     HAL_Delay(10);
 }

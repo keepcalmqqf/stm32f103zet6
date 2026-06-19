@@ -17,10 +17,17 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "stm32f1xx_hal.h"
 
 /* LCD geometry */
 #define ILI9486_WIDTH   320U
 #define ILI9486_HEIGHT  480U
+
+/* LCD control pins: backlight (PB0, active high) and reset (PG15, active low) */
+#define LCD_BG_Pin       GPIO_PIN_0
+#define LCD_BG_GPIO_Port GPIOB
+#define LCD_RST_Pin       GPIO_PIN_15
+#define LCD_RST_GPIO_Port GPIOG
 
 /* FSMC Bank1 NE4 base address and A10-based RS offset (per board schematic) */
 #define ILI9486_BASE_ADDR   0x6C000000U
