@@ -180,14 +180,33 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
 /* USER CODE BEGIN 1 */
 #include <stdio.h>
+#include "app_passthrough.h"
 
 void USART1_Init(void)
 {
     MX_USART1_UART_Init();
 }
 
+void USART1_InitRxInterrupt(void)
+{
+    __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
+    HAL_NVIC_SetPriority(USART1_IRQn, 5U, 0U);
+    HAL_NVIC_EnableIRQ(USART1_IRQn);
+}
+
+void USART2_InitRxInterrupt(void)
+{
+    __HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+    HAL_NVIC_SetPriority(USART2_IRQn, 5U, 0U);
+    HAL_NVIC_EnableIRQ(USART2_IRQn);
+}
+
 int __io_putchar(int ch)
 {
+    if (App_Passthrough_IsActive())
+    {
+        return ch;
+    }
     HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1U, HAL_MAX_DELAY);
     return ch;
 }

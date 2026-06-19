@@ -60,6 +60,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/App/Src/app_ui.c
     Core/App/Src/app_time_sync.c
     Core/App/Src/app_system.c
+    Core/App/Src/app_passthrough.c
     Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc.c
 )
 
@@ -84,4 +85,12 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     lvgl
 
     # Add user defined libraries
+)
+
+# Generate binary and hex files after building the ELF
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
+    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/${CMAKE_PROJECT_NAME}.hex
+    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/${CMAKE_PROJECT_NAME}.bin
+    COMMENT "Generating binary and hex files"
 )

@@ -14,6 +14,7 @@
 │  - app_system.c   : 系统初始化编排 / 主循环 │
 │  - app_ui.c       : LVGL 界面与显示逻辑     │
 │  - app_time_sync.c: WiFi + NTP + RTC 同步   │
+│  - app_passthrough.c: USART1↔USART2 透传桥接 │
 │  - app_config.h   : 应用配置与日志抽象      │
 ├─────────────────────────────────────────────┤
 │  main.c                                     │
@@ -74,11 +75,13 @@ stm32f103zet6/
 │       │   ├── app_config.h        # 应用配置 / 日志宏
 │       │   ├── app_system.h        # 初始化与主循环入口
 │       │   ├── app_time_sync.h     # 网络时间同步抽象
+│       │   ├── app_passthrough.h   # 串口透传桥接抽象
 │       │   ├── app_ui.h            # LVGL 界面抽象
 │       │   └── app_led_screen.h    # LED 与屏幕颜色映射
 │       └── Src/
 │           ├── app_system.c
 │           ├── app_time_sync.c
+│           ├── app_passthrough.c
 │           ├── app_ui.c
 │           └── app_led_screen.c
 ├── Middlewares/
@@ -116,7 +119,8 @@ stm32f103zet6/
 | `Core/App/Src/app_system.c` / `Inc/app_system.h` | 应用初始化编排与主循环 | 否 |
 | `Core/App/Src/app_ui.c` / `Inc/app_ui.h` | LVGL 界面与开机画面 | 否 |
 | `Core/App/Src/app_time_sync.c` / `Inc/app_time_sync.h` | WiFi + NTP → RTC 同步 | 否 |
-| `Core/App/Inc/app_config.h` | WiFi 凭证、NTP 服务器、时区、日志宏 | 否 |
+| `Core/App/Src/app_passthrough.c` / `Inc/app_passthrough.h` | USART1↔USART2 透传桥接 | 否 |
+| `Core/App/Inc/app_config.h` | WiFi 凭证、NTP 服务器、时区、日志宏、透传配置 | 否 |
 | `Core/BSP/Src/led.c` / `Inc/led.h` | 用户 LED 抽象层 | 否 |
 | `Core/BSP/Src/ili9486.c` / `Inc/ili9486.h` | ILI9486 LCD 驱动 | 否 |
 | `Core/BSP/Src/rtc.c` / `Inc/rtc.h` | 实时时钟驱动（LSE 32.768 kHz） | 否 |
@@ -159,12 +163,14 @@ main()
             ├── ILI9486_Init()            # LCD 初始化与诊断
             ├── RTC_BspInit()             # 启动 RTC
             ├── App_TimeSync_SyncFromNetwork()  # WiFi + NTP → RTC
-            └── App_UI_Init()             # LVGL + 时间标签
+            ├── App_UI_Init()             # LVGL + 时间标签
+            └── App_Passthrough_Start()   # 启用 USART1/2 RX 中断，进入透传
     │
     └── App_System_Run() 主循环
             ├── App_TimeSync_GetRtcDateTime() 读取 RTC
             ├── App_UI_UpdateClock() 更新时间标签
             ├── App_UI_Handler() 刷新 LVGL
+            ├── App_Passthrough_Run()     # 双向字节转发
             └── LED_ToggleNext()
 ```
 
@@ -237,7 +243,14 @@ main()
 - 配置来自 `app_config.h`（SSID、密码、NTP 服务器、时区）。
 - 同步失败时不会阻塞系统，继续使用 RTC 时间。
 
-### 4.11 应用配置 (`Core/App/Inc/app_config.h`)
+### 4.11 串口透传桥接 (`Core/App/Src/app_passthrough.c` / `Core/App/Inc/app_passthrough.h`)
+
+- NTP 成功后，把 USART1（PA9/PA10）与 USART2（PA2/PA3）做字节级透明转发。
+- 使用两个 ring buffer 与 USART1/2 RX 中断实现全双工转发。
+- 控制 ESP32-C3 的 PE4 使能脚（高电平有效），并在 AT 命令阶段前做一次硬件复位。
+- 透传激活后，`__io_putchar` 静默，避免日志字节污染 AT 数据流。
+
+### 4.12 应用配置 (`Core/App/Inc/app_config.h`)
 
 - 集中管理可调参数：WiFi 凭证、NTP 服务器、时区、刷新周期。
 - 提供 `APP_LOG_*` 宏作为日志抽象，默认通过 USART1 输出。
@@ -317,6 +330,35 @@ app_time_sync.c: App_TimeSync_SyncFromNetwork()
         rtc.c: 写入 STM32 RTC 计数器
 ```
 
+### 5.4 串口透传
+
+```text
+PC 串口助手
+    │
+    ▼
+USART1 RX 中断 (PA10)
+    │
+    ▼
+app_passthrough.c: ringbuf (U1→U2)
+    │
+    ▼
+App_Passthrough_Run()
+    │
+    ▼
+USART2 TX (PA2) → ESP32-C3 GPIO6 (U1RX)
+
+ESP32-C3 GPIO7 (U1TX) → USART2 RX (PA3)
+    │
+    ▼
+app_passthrough.c: ringbuf (U2→U1)
+    │
+    ▼
+App_Passthrough_Run()
+    │
+    ▼
+USART1 TX (PA9) → PC 串口助手
+```
+
 ---
 
 ## 6. 代码组织原则
@@ -378,6 +420,8 @@ app_time_sync.c: App_TimeSync_SyncFromNetwork()
 | 串口无输出 | USART1 未初始化或波特率不匹配 | 确认 `MX_USART1_UART_Init()` 已调用，波特率 115200 |
 | 程序卡死 | `Error_Handler()` 被触发 | 检查 HAL 初始化返回值与时钟配置；LED1 闪烁次数对应 `g_fatal_error` |
 | NTP 时间未同步 | WiFi 未连接或 NTP 服务器不可达 | 查看 USART1 日志；检查 `app_config.h` 中 SSID/密码/服务器 |
+| ESP32-C3 AT 无响应 / 乱码 | USART2 RX 中断与 `HAL_UART_Receive` 轮询冲突，或波特率不匹配 | 确认 `MX_USART2_UART_Init()` 波特率为 115200；RX 中断只在 NTP 成功后启用 |
+| 透传时 USART1 无输出 | 透传激活后 `printf` 已静默 | 正常现象；如需日志，临时关闭 `APP_PASSTHROUGH_ENABLED` |
 | CubeMX 重新生成后 FSMC 死机 | `HAL_NOR_MODULE_ENABLED` 被启用 | 改回 `HAL_SRAM_MODULE_ENABLED`，见 `Core/Inc/stm32f1xx_hal_conf.h` |
 
 ---
