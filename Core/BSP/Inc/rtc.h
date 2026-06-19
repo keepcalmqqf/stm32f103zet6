@@ -44,6 +44,24 @@ bool RTC_GetTime(uint8_t *hours, uint8_t *minutes, uint8_t *seconds);
  */
 HAL_StatusTypeDef RTC_SetTime(uint8_t hours, uint8_t minutes, uint8_t seconds);
 
+/**
+ * @brief  Read the current RTC date.
+ * @param  year  pointer to store year offset from 2000 (0-99).
+ * @param  month pointer to store month (1-12).
+ * @param  day   pointer to store day (1-31).
+ * @retval true if the read succeeded, false otherwise.
+ */
+bool RTC_GetDate(uint8_t *year, uint8_t *month, uint8_t *day);
+
+/**
+ * @brief  Set the RTC date.
+ * @param  year  year offset from 2000 (0-99).
+ * @param  month month to set (1-12).
+ * @param  day   day to set (1-31).
+ * @retval HAL status.
+ */
+HAL_StatusTypeDef RTC_SetDate(uint8_t year, uint8_t month, uint8_t day);
+
 #ifdef __cplusplus
 }
 #endif

@@ -54,8 +54,12 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/BSP/Src/led.c
     Core/BSP/Src/ili9486.c
     Core/BSP/Src/rtc.c
+    Core/BSP/Src/esp_wifi.c
     Core/BSP/Src/lvgl_port_display.c
     Core/App/Src/app_led_screen.c
+    Core/App/Src/app_ui.c
+    Core/App/Src/app_time_sync.c
+    Core/App/Src/app_system.c
     Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc.c
 )
 

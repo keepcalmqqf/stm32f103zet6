@@ -22,6 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "led.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -84,13 +85,16 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
-
-  /* USER CODE END HardFault_IRQn 0 */
+  __disable_irq();
+  LED_EarlyInit();
   while (1)
   {
-    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-    /* USER CODE END W1_HardFault_IRQn 0 */
+    LED_On(1);
+    for (volatile uint32_t j = 0U; j < 300000U; j++) { __NOP(); }
+    LED_Off(1);
+    for (volatile uint32_t j = 0U; j < 300000U; j++) { __NOP(); }
   }
+  /* USER CODE END HardFault_IRQn 0 */
 }
 
 /**

@@ -112,3 +112,34 @@ HAL_StatusTypeDef RTC_SetTime(uint8_t hours, uint8_t minutes, uint8_t seconds)
 
     return HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 }
+
+bool RTC_GetDate(uint8_t *year, uint8_t *month, uint8_t *day)
+{
+    if ((year == NULL) || (month == NULL) || (day == NULL))
+    {
+        return false;
+    }
+
+    RTC_DateTypeDef sDate = {0};
+    HAL_StatusTypeDef status = HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+    if (status != HAL_OK)
+    {
+        return false;
+    }
+
+    *year = sDate.Year;
+    *month = sDate.Month;
+    *day = sDate.Date;
+    return true;
+}
+
+HAL_StatusTypeDef RTC_SetDate(uint8_t year, uint8_t month, uint8_t day)
+{
+    RTC_DateTypeDef sDate = {0};
+    sDate.Year = year;
+    sDate.Month = month;
+    sDate.Date = day;
+    sDate.WeekDay = RTC_WEEKDAY_MONDAY; /* WeekDay is unused by the RTC counter on F1. */
+
+    return HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+}

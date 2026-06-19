@@ -23,11 +23,14 @@ extern "C" {
 
 extern UART_HandleTypeDef huart1;
 
+extern UART_HandleTypeDef huart2;
+
 /* USER CODE BEGIN Private defines */
 #define USART1_BAUDRATE 115200U
 /* USER CODE END Private defines */
 
 void MX_USART1_UART_Init(void);
+void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void USART1_Init(void);
